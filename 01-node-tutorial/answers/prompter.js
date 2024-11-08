@@ -21,17 +21,21 @@ const getBody = (req, callback) => {
 };
 
 // here, you could declare one or more variables to store what comes back from the form.
-let item = "Enter something below.";
+const targetNum = Math.floor(Math.random() * 100) + 1;
+let prompt = "Please enter a number between 1 and 100.";
+let guessCount = 0;
+const maxGuess = 5;
 
 // here, you can change the form below to modify the input fields and what is displayed.
 // This is just ordinary html with string interpolation.
 const form = () => {
   return `
   <body>
-  <p>${item}</p>
+  <p>${prompt}</p>
+  <p>Number of guesses left: ${maxGuess - guessCount} </p>
   <form method="POST">
-  <input name="item"></input>
-  <button type="submit">Submit</button>
+  <input name="guess" type="number" required></input>
+  <button type="submit">Submit Guess</button>
   </form>
   </body>
   `;
@@ -44,10 +48,21 @@ const server = http.createServer((req, res) => {
     getBody(req, (body) => {
       console.log("The body of the post is ", body);
       // here, you can add your own logic
-      if (body["item"]) {
-        item = body["item"];
+      guessCount += 1;
+      const guess = parseInt(body["guess"], 10);
+      if (guessCount > maxGuess) {
+        prompt = `You've used all ${maxGuess} guesses. The correct number was ${targetNum}.`;
+      } else if (!isNaN(guess)) {
+        if (guess < targetNum) {
+          prompt = "Your guess is too low. Try again!";
+        } else if (guess > targetNum) {
+          prompt = "Your guess is too high. Try again!";
+        } else {
+          prompt = `Congratulations! You guessed the number ${targetNum} correctly!`;
+          guessCount = maxGuess;
+        }
       } else {
-        item = "Nothing was entered.";
+        prompt = "Please enter a valid number.";
       }
       // Your code changes would end here
       res.writeHead(303, {
