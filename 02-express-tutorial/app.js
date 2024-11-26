@@ -1,11 +1,32 @@
 const express = require("express");
 const app = express();
-const { products } = require("./data");
+let { products } = require("./data");
+const logger = require("./logger");
+const peopleRouter = require("./routes/people");
 
 //setup static and middleware.
-app.use(express.static("./public"));
+app.use(express.urlencoded({ extended: false }));
+app.use(express.json());
+//app.use(express.static("./public"));
+app.use(express.static("./methods-public"));
+app.use(logger);
+app.use("/api/v1/people", peopleRouter);
 
-app.get("/api/v1/test", (req, res) => {
+// //GET people
+// app.get("/api/v1/people", (req, res) => {
+//   res.status(200).json({ success: true, data: people });
+// });
+
+// //POST people
+// app.post("/login", (req, res) => {
+//   if (!req.body.name) {
+//     res.status(400).json({ success: false, message: "Please provide a name" });
+//   }
+//   people.push({ id: people.length + 1, name: req.body.name });
+//   res.status(201).json({ success: true, data: `Welcome ${req.body.name}` });
+// });
+
+app.get("/api/v1/test", logger, (req, res) => {
   res.json({ message: "It worked!" });
 });
 
@@ -50,6 +71,7 @@ app.get("/api/v1/query", (req, res) => {
   res.status(200).json(sortedProducts);
 });
 
+//Error
 app.all("*", (req, res) => {
   res.status(404).send("<h1>Page not found</h1>");
 });
