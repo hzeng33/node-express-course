@@ -32,7 +32,7 @@ app.get("/api/v1/query", (req, res) => {
 
   if (search) {
     sortedProducts = sortedProducts.filter((product) => {
-      return product.name.startsWith(search);
+      return product.name.toLowerCase().includes(search.toLowerCase());
     });
   }
   if (price) {
