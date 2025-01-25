@@ -1,10 +1,10 @@
 const jwt = require("jsonwebtoken");
-const { BedRequestError } = require("../errors");
+const { BadRequestError } = require("../errors");
 
 const login = async (req, res) => {
   const { username, password } = req.body;
   if (!username || !password) {
-    throw new BedRequestError("Please provide username and password");
+    throw new BadRequestError("Please provide username and password");
   }
   //console.log(username, password);
 
